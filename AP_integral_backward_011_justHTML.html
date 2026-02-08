@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculus Laboratory: The Exact Accumulation Function</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+        header { text-align: center; border-bottom: 3px solid #005a8d; padding-bottom: 20px; margin-bottom: 30px; }
+        .main-layout { display: flex; gap: 25px; align-items: stretch; margin-bottom: 30px; }
+        
+        /* Vertical Slider Sidebar */
+        .sidebar { background: #002b49; color: white; padding: 25px 15px; border-radius: 15px; width: 100px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .sidebar label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; font-weight: 600; color: #a5d8ff; }
+        input[type=range] { appearance: slider-vertical; width: 15px; height: 400px; cursor: pointer; }
+        .x-val { margin-top: 20px; font-weight: bold; font-size: 1.5rem; color: #4dabf7; font-family: 'Courier New', monospace; }
+
+        .content { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
+        .math-hero { background: white; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid #dee2e6; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 80px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+
+        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; padding: 20px; border: 1px solid #ddd; border-radius: 12px; text-align: center; }
+        .card h4 { margin: 0 0 15px 0; font-size: 0.9rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        
+        svg { background: #fff; border: 1px solid #eee; border-radius: 6px; width: 100%; height: auto; }
+        .axis { stroke: #bbb; stroke-width: 1.5; }
+        .grid-line { stroke: #f0f0f0; stroke-width: 1; }
+        .f-path { stroke: #333; stroke-width: 2.5; fill: none; }
+        .g-path { stroke: #007bff; stroke-width: 3; fill: none; }
+        .area-fill { fill: rgba(0, 123, 255, 0.35); }
+        .marker { fill: #e63946; stroke: white; stroke-width: 2; }
+
+        .data-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        .data-table th { background: #f1f3f5; font-weight: 600; }
+        .active-row { background: #e7f3ff; font-weight: bold; color: #005a8d; }
+
+        .challenge-section { background: #fffcf0; border-left: 6px solid #ffc107; padding: 25px; border-radius: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>The Fundamental Theorem of Calculus Lab</h1>
+    <p>Function: \( f(x) = 10^{-4}(x+7)(x+5)(x+3)(x-2)(x-6)^2(x-9) \)</p>
+</header>
+
+<div class="main-layout">
+    <div class="sidebar">
+        <label>ADJUST BOUND \( x \)</label>
+        <input type="range" id="xSlider" min="-7" max="9" step="0.1" value="-3">
+        <div class="x-val" id="xLabel">-3.0</div>
+    </div>
+
+    <div class="content">
+        <div class="math-hero" id="mathOutput">
+            \[ g(-3.0) = -6 + \int_{-3}^{-3.0} f(t) dt = -6.00 \]
+        </div>
+
+        <div class="charts-container">
+            <div class="card">
+                <h4>Rate: \( f(t) \)</h4>
+                
+                <svg id="fSvg" viewBox="0 0 400 250">
+                    <line x1="0" y1="110" x2="400" y2="110" class="axis" />
+                    <line x1="111" y1="10" x2="111" y2="240" class="axis" />
+                    <path id="fArea" class="area-fill" />
+                    <path id="fLine" class="f-path" />
+                </svg>
+            </div>
+            <div class="card">
+                <h4>Accumulation: \( g(x) \)</h4>
+                
+                <svg id="gSvg" viewBox="0 0 400 250">
+                    <line x1="0" y1="145" x2="400" y2="145" class="axis" />
+                    <line x1="111" y1="10" x2="111" y2="240" class="axis" />
+                    <path id="gLine" class="g-path" />
+                    <circle id="gPoint" r="5" class="marker" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Critical \( x \)</th><th>Interpretation</th><th>Exact \( g(x) \)</th></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr id="row-7"><td>-7.0</td><td>Boundary Minimum</td><td>-9.12</td></tr>
+                    <tr id="row-5"><td>-5.0</td><td>Local Maximum</td><td>-4.21</td></tr>
+                    <tr id="row-3"><td>-3.0</td><td>Integral Reference</td><td>-6.00</td></tr>
+                    <tr id="row2"><td>2.0</td><td>Absolute Maximum</td><td style="color:#007bff">9.82</td></tr>
+                    <tr id="row6"><td>6.0</td><td>Tangent Point</td><td>4.73</td></tr>
+                    <tr id="row9"><td>9.0</td><td>End of Domain</td><td>-1.15</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="challenge-section">
+            <h3>Student Challenge: Concavity Analysis</h3>
+            <p>The <b>Second Derivative</b> \( g''(x) = f'(x) \) determines curvature. Answer based on the graphs:</p>
+            <ul>
+                <li>Identify regions where \( f(t) \) is increasing. In these zones, is \( g(x) \) concave up or down?</li>
+                <li>Find where \( f(t) \) has a peak or valley. These are the <b>Inflection Points</b> of \( g(x) \).</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Exact Polynomial f(x)
+    const f = (x) => 0.0001 * (x + 7) * (x + 5) * (x + 3) * (x - 2) * Math.pow(x - 6, 2) * (x - 9);
+    
+    // Exact Integration Calculation
+    function integrate(upper) {
+        let sum = 0, steps = 1000, lower = -3, dx = (upper - lower) / steps;
+        for (let i = 0; i < steps; i++) sum += f(lower + i * dx) * dx;
+        return -6 + sum;
+    }
+
+    // Mapping coordinates to SVG Viewbox
+    const mapX = (x) => (x + 8) * 400 / 18;
+    const mapYf = (y) => 110 - y * 14;
+    const mapYg = (y) => 145 - y * 7.5;
+
+    const slider = document.getElementById('xSlider');
+    const mathOut = document.getElementById('mathOutput');
+
+    function update() {
+        const xVal = parseFloat(slider.value);
+        const gVal = integrate(xVal);
+        document.getElementById('xLabel').innerText = xVal.toFixed(1);
+        
+        // Update LaTeX Equation
+        mathOut.innerHTML = `\\[ g(${xVal.toFixed(1)}) = -6 + \\int_{-3}^{${xVal.toFixed(1)}} f(t) dt = ${gVal.toFixed(2)} \\]`;
+        MathJax.typesetPromise([mathOut]);
+
+        // FIXED SHADING LOGIC: Properly shade the area under the curve
+        let areaD = `M ${mapX(-3)} ${mapYf(0)} `; // Start at x-axis at lower bound
+        
+        if (xVal >= -3) {
+            // Integrate forward: from -3 to xVal
+            for(let i = -3; i <= xVal; i += 0.05) {
+                areaD += `L ${mapX(i)} ${mapYf(f(i))} `;
+            }
+            areaD += `L ${mapX(xVal)} ${mapYf(f(xVal))} `; // Ensure we hit the exact endpoint
+            areaD += `L ${mapX(xVal)} ${mapYf(0)} Z`; // Drop to x-axis and close
+        } else {
+            // Integrate backward: from -3 to xVal
+            for(let i = -3; i >= xVal; i -= 0.05) {
+                areaD += `L ${mapX(i)} ${mapYf(f(i))} `;
+            }
+            areaD += `L ${mapX(xVal)} ${mapYf(f(xVal))} `; // Ensure we hit the exact endpoint
+            areaD += `L ${mapX(xVal)} ${mapYf(0)} Z`; // Drop to x-axis and close
+        }
+        
+        document.getElementById('fArea').setAttribute("d", areaD);
+
+        // Update Paths for f and g
+        let fD = "M", gD = "M";
+        for(let i=-7.5; i<=9.5; i+=0.1) fD += `${mapX(i)} ${mapYf(f(i))} `;
+        for(let i=-7; i<=xVal; i+=0.1) gD += `${mapX(i)} ${mapYg(integrate(i))} `;
+        
+        document.getElementById('fLine').setAttribute("d", fD);
+        document.getElementById('gLine').setAttribute("d", gD);
+        document.getElementById('gPoint').setAttribute("cx", mapX(xVal));
+        document.getElementById('gPoint').setAttribute("cy", mapYg(gVal));
+
+        // Highlight Active Table Row
+        const criticals = [-7, -5, -3, 2, 6, 9];
+        criticals.forEach(c => {
+            const id = "row" + (c < 0 ? c : c);
+            document.getElementById(id).className = (Math.abs(xVal - c) < 0.2) ? "active-row" : "";
+        });
+    }
+
+    slider.oninput = update;
+    window.onload = update;
+</script>
+</body>
+</html>

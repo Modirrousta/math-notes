@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauhaus Calculus: Solids of Revolution</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --bauhaus-red: #e63946;
+            --bauhaus-blue: #1d3557;
+            --bauhaus-yellow: #ffb703;
+            --bauhaus-black: #000000;
+            --bauhaus-white: #f1faee;
+        }
+
+        body {
+            background-color: var(--bauhaus-white);
+            color: var(--bauhaus-black);
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            height: 100vh;
+        }
+
+        /* --- Sidebar Control Panel --- */
+        #controls {
+            border-right: 4px solid var(--bauhaus-black);
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 8px solid var(--bauhaus-red);
+            padding-bottom: 10px;
+            margin: 0;
+        }
+
+        .input-block {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        input, select {
+            border: 2px solid var(--bauhaus-black);
+            padding: 10px;
+            font-family: monospace;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: var(--bauhaus-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--bauhaus-red);
+        }
+
+        /* --- Visualization Area --- */
+        #visuals {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            background-color: #ddd;
+            gap: 4px;
+        }
+
+        .plot-container {
+            background: white;
+            position: relative;
+        }
+
+        .tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--bauhaus-black);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="controls">
+    <h1>Calculus Studio</h1>
+    
+    <div class="input-block">
+        <label>Upper Function f(x)</label>
+        <input type="text" id="funcF" value="Math.sqrt(x)" oninput="draw2D()">
+    </div>
+
+    <div class="input-block">
+        <label>Lower Function g(x)</label>
+        <input type="text" id="funcG" value="x*x" oninput="draw2D()">
+    </div>
+
+    <div class="input-block">
+        <label>Bounds [x-start, x-end]</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="xStart" value="0" step="0.1" oninput="draw2D()">
+            <input type="number" id="xEnd" value="1" step="0.1" oninput="draw2D()">
+        </div>
+    </div>
+
+    <div class="input-block">
+        <label>Axis of Revolution</label>
+        <div class="radio-group">
+            <label><input type="radio" name="axis" value="x" checked> X-Axis</label>
+            <label><input type="radio" name="axis" value="y"> Y-Axis</label>
+        </div>
+    </div>
+
+    <button class="btn" onclick="generate3D()">Generate Solid</button>
+    
+    <div id="stats" style="margin-top: auto; font-size: 0.8rem; border-top: 2px solid black; padding-top: 10px;">
+        Industrial AI Visualization v2.0<br>
+        Bauhaus Geometry Engine
+    </div>
+</div>
+
+<div id="visuals">
+    <div class="plot-container">
+        <span class="tag">Planar Region</span>
+        <div id="plot2d" style="width:100%; height:100%;"></div>
+    </div>
+    <div class="plot-container">
+        <span class="tag">Volumetric Solid</span>
+        <div id="plot3d" style="width:100%; height:100%;"></div>
+    </div>
+</div>
+
+<script>
+    const colors = { red: '#e63946', blue: '#1d3557', yellow: '#ffb703' };
+
+    function getF(x) { 
+        try { return eval(document.getElementById('funcF').value); } catch(e) { return 0; }
+    }
+    function getG(x) { 
+        try { return eval(document.getElementById('funcG').value); } catch(e) { return 0; }
+    }
+
+    function draw2D() {
+        const x1 = parseFloat(document.getElementById('xStart').value);
+        const x2 = parseFloat(document.getElementById('xEnd').value);
+        
+        let xVals = [], fVals = [], gVals = [];
+        let rx = [], ry = [];
+
+        // Generate padding for the curve view
+        for(let x = x1 - 0.5; x <= x2 + 0.5; x += 0.05) {
+            xVals.push(x);
+            fVals.push(getF(x));
+            gVals.push(getG(x));
+        }
+
+        // Generate filled region
+        for(let x = x1; x <= x2; x += 0.02) { rx.push(x); ry.push(getF(x)); }
+        for(let x = x2; x >= x1; x -= 0.02) { rx.push(x); ry.push(getG(x)); }
+
+        const data = [
+            { x: rx, y: ry, fill: 'toself', fillcolor: 'rgba(230, 57, 70, 0.3)', line: {width: 0}, name: 'Region' },
+            { x: xVals, y: fVals, line: {color: colors.blue, width: 3}, name: 'f(x)' },
+            { x: xVals, y: gVals, line: {color: colors.yellow, width: 3}, name: 'g(x)' }
+        ];
+
+        Plotly.newPlot('plot2d', data, {
+            margin: {t:40, b:40, l:40, r:40},
+            xaxis: {zeroline: true, gridcolor: '#eee'},
+            yaxis: {zeroline: true, gridcolor: '#eee'},
+            showlegend: false
+        });
+    }
+
+    function generate3D() {
+        const x1 = parseFloat(document.getElementById('xStart').value);
+        const x2 = parseFloat(document.getElementById('xEnd').value);
+        const axis = document.querySelector('input[name="axis"]:checked').value;
+        
+        const thetaRes = 40;
+        const xRes = 30;
+        
+        function createSurface(func) {
+            let sx = [], sy = [], sz = [];
+            for (let i = 0; i <= xRes; i++) {
+                let x = x1 + (i/xRes) * (x2 - x1);
+                let r = (axis === 'x') ? func(x) : x;
+                let h = (axis === 'x') ? x : func(x);
+                
+                let rowX = [], rowY = [], rowZ = [];
+                for (let j = 0; j <= thetaRes; j++) {
+                    let theta = (j / thetaRes) * 2 * Math.PI;
+                    if(axis === 'x') {
+                        rowX.push(h);
+                        rowY.push(r * Math.cos(theta));
+                        rowZ.push(r * Math.sin(theta));
+                    } else {
+                        rowX.push(r * Math.cos(theta));
+                        rowY.push(r * Math.sin(theta));
+                        rowZ.push(h);
+                    }
+                }
+                sx.push(rowX); sy.push(rowY); sz.push(rowZ);
+            }
+            return {x: sx, y: sy, z: sz};
+        }
+
+        const surfF = createSurface(getF);
+        const surfG = createSurface(getG);
+
+        const data = [
+            { type: 'surface', ...surfF, colorscale: [[0, colors.blue], [1, colors.blue]], opacity: 0.8, showscale: false },
+            { type: 'surface', ...surfG, colorscale: [[0, colors.yellow], [1, colors.yellow]], opacity: 0.8, showscale: false }
+        ];
+
+        Plotly.newPlot('plot3d', data, {
+            margin: {t:0, b:0, l:0, r:0},
+            scene: {
+                xaxis: {title: 'X', backgroundcolor: 'white', gridcolor: '#000'},
+                yaxis: {title: 'Y', backgroundcolor: 'white', gridcolor: '#000'},
+                zaxis: {title: 'Z', backgroundcolor: 'white', gridcolor: '#000'},
+                aspectratio: {x: 1, y: 1, z: 1}
+            }
+        });
+    }
+
+    // Initialize
+    draw2D();
+</script>
+
+</body>
+</html>
