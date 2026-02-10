@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AP Calculus: Full Breakdown</title>
+    <title>AP Calculus: Ultimate Guide</title>
     <style>
         :root {
-            /* Light Theme Variables */
-            --bg-body: #f3f4f6;       
+            /* Theme Variables */
+            --bg-body: #f8fafc;       
             --bg-sidebar: #ffffff;    
             --bg-card: #ffffff;       
-            
-            --text-main: #1f2937;     
-            --text-muted: #6b7280;    
-            --border-color: #e5e7eb;  
+            --text-main: #0f172a;     
+            --text-muted: #64748b;    
+            --border-color: #e2e8f0;  
             
             /* Professional Accents */
             --primary: #2563eb;       
@@ -26,9 +25,13 @@
             --tag-fun-bg: #fef2f2; --tag-fun-text: #b91c1c; --tag-fun-border: #fca5a5;
             --tag-cha-bg: #ecfdf5; --tag-cha-text: #047857; --tag-cha-border: #6ee7b7;
 
-            /* BC Only Topic Styling */
+            /* BC Styling */
             --bc-topic-bg: #fdf4ff;
             --bc-topic-border: #f0abfc;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -38,11 +41,10 @@
             margin: 0;
             padding: 0;
             display: flex;
-            height: 100vh;
-            overflow: hidden; 
+            min-height: 100vh;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- STATIC SIDEBAR --- */
         .sidebar {
             width: 280px;
             background-color: var(--bg-sidebar);
@@ -50,8 +52,13 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
             flex-shrink: 0;
-            z-index: 10;
+            z-index: 100;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.02);
         }
 
         .brand {
@@ -59,175 +66,247 @@
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
         }
-
-        .brand h1 { font-size: 1.25rem; margin: 0; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
+        .brand h1 { font-size: 1.4rem; margin: 0; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
         .brand p { margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-muted); }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            overflow-y: auto;
-            padding-right: 5px; /* space for scrollbar */
-        }
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; }
 
         .nav-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 10px 15px;
+            padding: 12px 15px;
             text-align: left;
             cursor: pointer;
             border-radius: 8px;
             font-weight: 600;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .nav-btn:hover { background-color: var(--bg-body); color: var(--primary); }
-        .nav-btn.active { background-color: var(--primary-light); color: var(--primary); border: 1px solid #bfdbfe; }
+        /* Fancy Hover Effect */
+        .nav-btn:hover {
+            background-color: var(--bg-body);
+            color: var(--primary);
+            transform: translateX(5px);
+            box-shadow: -2px 0 0 var(--primary);
+        }
 
-        .nav-unit-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 2px; }
-        .nav-unit-title { font-size: 0.9rem; line-height: 1.2; }
+        .nav-btn.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+        }
+
+        .nav-unit-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 2px; display:block; }
+        .nav-unit-title { font-size: 0.9rem; line-height: 1.3; font-weight: 700; }
 
         /* --- MAIN CONTENT --- */
         .main-content {
             flex: 1;
-            padding: 30px 40px;
-            overflow-y: auto;
-            position: relative;
+            padding: 40px 60px;
+            /* Allow body scroll */
         }
 
+        /* --- DASHBOARD SECTION --- */
+        .dashboard-section { margin-bottom: 80px; }
+        
         .topic-panel {
             display: none;
-            max-width: 900px;
-            margin: 0 auto 50px auto;
-            animation: fadeIn 0.3s ease-in;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
         }
         .topic-panel.active { display: block; }
 
-        .panel-header h2 { font-size: 1.8rem; margin: 0 0 15px 0; color: var(--text-main); }
+        .panel-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        .panel-header h2 { font-size: 2rem; margin: 0; color: var(--text-main); letter-spacing: -1px; }
 
         /* Stats Bar */
         .compact-stats {
+            margin-top: 20px;
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px 20px;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            gap: 30px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            gap: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-
-        .stats-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            min-width: 120px;
-        }
-
-        .stats-bars-wrapper { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .stats-title { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .stats-bars-wrapper { flex: 1; display: flex; flex-direction: column; gap: 12px; }
         .stat-row { display: flex; align-items: center; gap: 15px; }
-        .stat-label { font-size: 0.8rem; font-weight: 600; width: 80px; color: var(--text-muted); }
-        .stat-pct { font-size: 0.8rem; color: var(--text-muted); width: 60px; text-align: right; }
-        
-        .progress-bg {
-            flex: 1;
-            background: #e5e7eb;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            max-width: 400px;
-        }
-        .progress-fill { height: 100%; border-radius: 4px; }
-        .fill-ab { background-color: var(--ab-color); }
-        .fill-bc { background-color: var(--bc-color); }
+        .stat-label { font-size: 0.85rem; font-weight: 600; width: 80px; color: var(--text-muted); }
+        .stat-pct { font-size: 0.85rem; color: var(--text-main); font-weight: 700; width: 60px; text-align: right; }
+        .progress-bg { flex: 1; background: #f1f5f9; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 5px; transition: width 1s ease-out; }
+        .fill-ab { background: linear-gradient(90deg, var(--ab-color), #38bdf8); }
+        .fill-bc { background: linear-gradient(90deg, var(--bc-color), #e879f9); }
 
-        /* Topic List */
-        .topic-list {
+        /* Dashboard Topic List */
+        .dashboard-list {
             list-style: none;
             padding: 0;
-            margin: 0;
             background: var(--bg-card);
-            border-radius: 12px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
             overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        .topic-item {
+        .dashboard-item {
             display: flex;
             align-items: center;
-            padding: 14px 20px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
-            transition: background 0.1s;
+            transition: background 0.15s;
         }
-        .topic-item:last-child { border-bottom: none; }
-        .topic-item:hover { background-color: #f9fafb; }
-
-        /* BC Only Row Styling */
-        .topic-item.bc-only {
-            background-color: var(--bc-topic-bg);
-            border-left: 4px solid var(--bc-color);
-            padding-left: 16px; /* Adjust for border */
-        }
-        .topic-item.bc-only:hover { background-color: #fae8ff; }
-
-        .topic-id {
+        .dashboard-item:last-child { border-bottom: none; }
+        .dashboard-item:hover { background-color: #f8fafc; }
+        
+        .dashboard-item.bc-only { background-color: var(--bc-topic-bg); border-left: 4px solid var(--bc-color); padding-left: 20px; }
+        
+        /* The Link itself */
+        .topic-link {
             font-family: 'Courier New', monospace;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--primary);
             margin-right: 20px;
-            width: 45px;
+            width: 50px;
             flex-shrink: 0;
-        }
-
-        .topic-name { font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
-
-        .tag {
-            font-size: 0.65rem;
-            padding: 3px 8px;
+            text-decoration: none;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 4px 8px;
             border-radius: 6px;
-            margin-right: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            min-width: 45px;
             text-align: center;
-            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .topic-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
         }
 
+        /* --- DETAILED BREAKDOWN SECTION --- */
+        .details-section {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-main);
+        }
+        .section-title::before { content: ''; display: block; width: 6px; height: 30px; background: var(--primary); border-radius: 3px; }
+
+        .detail-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            scroll-margin-top: 20px; /* For smooth anchor landing */
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .detail-card:target {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            animation: pulse 1s;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .detail-id {
+            background: var(--text-main);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .detail-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        .info-block h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 0 0 8px 0;
+        }
+
+        .info-block p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+            color: #334155;
+        }
+
+        .eu-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--text-muted);
+        }
+        
+        .skill-box {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--ab-color);
+        }
+
+        /* Tags Utility */
+        .tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; margin-right: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-cha { background: var(--tag-cha-bg); color: var(--tag-cha-text); border: 1px solid var(--tag-cha-border); }
         .tag-lim { background: var(--tag-lim-bg); color: var(--tag-lim-text); border: 1px solid var(--tag-lim-border); }
         .tag-fun { background: var(--tag-fun-bg); color: var(--tag-fun-text); border: 1px solid var(--tag-fun-border); }
-        
-        .bc-badge {
-            font-size: 0.6rem;
-            background: var(--bc-color);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow: auto; height: auto; }
-            .sidebar { width: 100%; height: auto; padding: 15px; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 5px; gap: 10px; }
-            .nav-btn { min-width: 140px; flex-shrink: 0; }
-            .main-content { padding: 20px; }
-            .compact-stats { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .progress-bg { max-width: 100%; }
-            .topic-item { align-items: flex-start; }
-            .topic-name { font-size: 0.9rem; }
-        }
+        .bc-badge { font-size: 0.6rem; background: var(--bc-color); color: white; padding: 2px 6px; border-radius: 4px; margin-right: 10px; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 15px; box-shadow: none; border-bottom: 1px solid var(--border-color); }
+            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+            .nav-btn { min-width: 140px; flex-shrink: 0; }
+            .main-content { padding: 20px; }
+            .detail-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -235,38 +314,38 @@
     <aside class="sidebar">
         <div class="brand">
             <h1>AP Calculus</h1>
-            <p>Unit Breakdown & Weighting</p>
+            <p>Course & Exam Description</p>
         </div>
         <nav class="nav-menu">
-            <button class="nav-btn active" onclick="openTab(event, 'u1')">
+            <button class="nav-btn active" onclick="openUnit(event, 'u1')">
                 <span class="nav-unit-num">UNIT 1</span>
                 <span class="nav-unit-title">Limits & Continuity</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u2')">
+            <button class="nav-btn" onclick="openUnit(event, 'u2')">
                 <span class="nav-unit-num">UNIT 2</span>
-                <span class="nav-unit-title">Differentiation: Def</span>
+                <span class="nav-unit-title">Diff: Definition</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u3')">
+            <button class="nav-btn" onclick="openUnit(event, 'u3')">
                 <span class="nav-unit-num">UNIT 3</span>
-                <span class="nav-unit-title">Differentiation: Comp</span>
+                <span class="nav-unit-title">Diff: Composite</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u4')">
+            <button class="nav-btn" onclick="openUnit(event, 'u4')">
                 <span class="nav-unit-num">UNIT 4</span>
                 <span class="nav-unit-title">Contextual Apps</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u5')">
+            <button class="nav-btn" onclick="openUnit(event, 'u5')">
                 <span class="nav-unit-num">UNIT 5</span>
                 <span class="nav-unit-title">Analytical Apps</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u6')">
+            <button class="nav-btn" onclick="openUnit(event, 'u6')">
                 <span class="nav-unit-num">UNIT 6</span>
-                <span class="nav-unit-title">Integration & Accum</span>
+                <span class="nav-unit-title">Integration</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u7')">
+            <button class="nav-btn" onclick="openUnit(event, 'u7')">
                 <span class="nav-unit-num">UNIT 7</span>
-                <span class="nav-unit-title">Differential Eq</span>
+                <span class="nav-unit-title">Diff Equations</span>
             </button>
-            <button class="nav-btn" onclick="openTab(event, 'u8')">
+            <button class="nav-btn" onclick="openUnit(event, 'u8')">
                 <span class="nav-unit-num">UNIT 8</span>
                 <span class="nav-unit-title">Apps of Integration</span>
             </button>
@@ -275,297 +354,216 @@
 
     <main class="main-content">
 
-        <div id="u1" class="topic-panel active">
-            <div class="panel-header">
-                <h2>Unit 1: Limits & Continuity</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
-                            <span class="stat-pct">10-12%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span class="stat-pct">4-7%</span>
+        <div class="dashboard-section">
+            
+            <div id="u1" class="topic-panel active">
+                <div class="panel-header">
+                    <h2>Unit 1: Limits & Continuity</h2>
+                    <div class="compact-stats">
+                        <div class="stats-title">Exam Weighting</div>
+                        <div class="stats-bars-wrapper">
+                            <div class="stat-row"><span class="stat-label">AB Exam</span><div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div><span class="stat-pct">12%</span></div>
+                            <div class="stat-row"><span class="stat-label">BC Exam</span><div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div><span class="stat-pct">7%</span></div>
                         </div>
                     </div>
                 </div>
+                <ul class="dashboard-list">
+                    <li class="dashboard-item"><a href="#topic-1.1" class="topic-link">1.1</a><span class="tag tag-cha">CHA</span><span class="topic-name">Introducing Calculus: Can Change Occur at an Instant?</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.2" class="topic-link">1.2</a><span class="tag tag-lim">LIM</span><span class="topic-name">Defining Limits and Using Limit Notation</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.3" class="topic-link">1.3</a><span class="tag tag-lim">LIM</span><span class="topic-name">Estimating Limit Values from Graphs</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.4" class="topic-link">1.4</a><span class="tag tag-lim">LIM</span><span class="topic-name">Estimating Limit Values from Tables</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.5" class="topic-link">1.5</a><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using Algebraic Properties</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.6" class="topic-link">1.6</a><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using Algebraic Manipulation</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.7" class="topic-link">1.7</a><span class="tag tag-lim">LIM</span><span class="topic-name">Selecting Procedures for Determining Limits</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.8" class="topic-link">1.8</a><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using the Squeeze Theorem</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.9" class="topic-link">1.9</a><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Multiple Representations of Limits</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.10" class="topic-link">1.10</a><span class="tag tag-lim">LIM</span><span class="topic-name">Exploring Types of Discontinuities</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.11" class="topic-link">1.11</a><span class="tag tag-lim">LIM</span><span class="topic-name">Defining Continuity at a Point</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.12" class="topic-link">1.12</a><span class="tag tag-lim">LIM</span><span class="topic-name">Confirming Continuity over an Interval</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.13" class="topic-link">1.13</a><span class="tag tag-lim">LIM</span><span class="topic-name">Removing Discontinuities</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.14" class="topic-link">1.14</a><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Infinite Limits and Vertical Asymptotes</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.15" class="topic-link">1.15</a><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Limits at Infinity and Horizontal Asymptotes</span></li>
+                    <li class="dashboard-item"><a href="#topic-1.16" class="topic-link">1.16</a><span class="tag tag-fun">FUN</span><span class="topic-name">Working with the Intermediate Value Theorem (IVT)</span></li>
+                </ul>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">1.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Introducing Calculus: Can Change Occur at an Instant?</span></li>
-                <li class="topic-item"><span class="topic-id">1.2</span><span class="tag tag-lim">LIM</span><span class="topic-name">Defining Limits and Using Limit Notation</span></li>
-                <li class="topic-item"><span class="topic-id">1.3</span><span class="tag tag-lim">LIM</span><span class="topic-name">Estimating Limit Values from Graphs</span></li>
-                <li class="topic-item"><span class="topic-id">1.4</span><span class="tag tag-lim">LIM</span><span class="topic-name">Estimating Limit Values from Tables</span></li>
-                <li class="topic-item"><span class="topic-id">1.5</span><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using Algebraic Properties</span></li>
-                <li class="topic-item"><span class="topic-id">1.6</span><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using Algebraic Manipulation</span></li>
-                <li class="topic-item"><span class="topic-id">1.7</span><span class="tag tag-lim">LIM</span><span class="topic-name">Selecting Procedures for Determining Limits</span></li>
-                <li class="topic-item"><span class="topic-id">1.8</span><span class="tag tag-lim">LIM</span><span class="topic-name">Determining Limits Using the Squeeze Theorem</span></li>
-                <li class="topic-item"><span class="topic-id">1.9</span><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Multiple Representations of Limits</span></li>
-                <li class="topic-item"><span class="topic-id">1.10</span><span class="tag tag-lim">LIM</span><span class="topic-name">Exploring Types of Discontinuities</span></li>
-                <li class="topic-item"><span class="topic-id">1.11</span><span class="tag tag-lim">LIM</span><span class="topic-name">Defining Continuity at a Point</span></li>
-                <li class="topic-item"><span class="topic-id">1.12</span><span class="tag tag-lim">LIM</span><span class="topic-name">Confirming Continuity over an Interval</span></li>
-                <li class="topic-item"><span class="topic-id">1.13</span><span class="tag tag-lim">LIM</span><span class="topic-name">Removing Discontinuities</span></li>
-                <li class="topic-item"><span class="topic-id">1.14</span><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Infinite Limits and Vertical Asymptotes</span></li>
-                <li class="topic-item"><span class="topic-id">1.15</span><span class="tag tag-lim">LIM</span><span class="topic-name">Connecting Limits at Infinity and Horizontal Asymptotes</span></li>
-                <li class="topic-item"><span class="topic-id">1.16</span><span class="tag tag-fun">FUN</span><span class="topic-name">Working with the Intermediate Value Theorem (IVT)</span></li>
-            </ul>
-        </div>
 
-        <div id="u2" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 2: Differentiation (Definition & Properties)</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
-                            <span class="stat-pct">10-12%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span class="stat-pct">4-7%</span>
+            <div id="u2" class="topic-panel">
+                <div class="panel-header">
+                    <h2>Unit 2: Differentiation (Definition)</h2>
+                    <div class="compact-stats">
+                        <div class="stats-title">Exam Weighting</div>
+                        <div class="stats-bars-wrapper">
+                            <div class="stat-row"><span class="stat-label">AB Exam</span><div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div><span class="stat-pct">12%</span></div>
+                            <div class="stat-row"><span class="stat-label">BC Exam</span><div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div><span class="stat-pct">7%</span></div>
                         </div>
                     </div>
                 </div>
+                <ul class="dashboard-list">
+                    <li class="dashboard-item"><a href="#topic-2.1" class="topic-link">2.1</a><span class="tag tag-cha">CHA</span><span class="topic-name">Average and Instantaneous Rates of Change</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.2" class="topic-link">2.2</a><span class="tag tag-cha">CHA</span><span class="topic-name">Defining the Derivative and Using Notation</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.3" class="topic-link">2.3</a><span class="tag tag-cha">CHA</span><span class="topic-name">Estimating Derivatives of a Function at a Point</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.4" class="topic-link">2.4</a><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting Differentiability and Continuity</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.5" class="topic-link">2.5</a><span class="tag tag-fun">FUN</span><span class="topic-name">Applying the Power Rule</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.6" class="topic-link">2.6</a><span class="tag tag-fun">FUN</span><span class="topic-name">Derivative Rules: Constant, Sum, Difference</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.7" class="topic-link">2.7</a><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of cos x, sin x, e^x, and ln x</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.8" class="topic-link">2.8</a><span class="tag tag-fun">FUN</span><span class="topic-name">The Product Rule</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.9" class="topic-link">2.9</a><span class="tag tag-fun">FUN</span><span class="topic-name">The Quotient Rule</span></li>
+                    <li class="dashboard-item"><a href="#topic-2.10" class="topic-link">2.10</a><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of Tan, Cot, Sec, and Csc</span></li>
+                </ul>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">2.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Defining Average and Instantaneous Rates of Change</span></li>
-                <li class="topic-item"><span class="topic-id">2.2</span><span class="tag tag-cha">CHA</span><span class="topic-name">Defining the Derivative and Using Notation</span></li>
-                <li class="topic-item"><span class="topic-id">2.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Estimating Derivatives of a Function at a Point</span></li>
-                <li class="topic-item"><span class="topic-id">2.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting Differentiability and Continuity</span></li>
-                <li class="topic-item"><span class="topic-id">2.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Applying the Power Rule</span></li>
-                <li class="topic-item"><span class="topic-id">2.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivative Rules: Constant, Sum, Difference, Constant Multiple</span></li>
-                <li class="topic-item"><span class="topic-id">2.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of cos x, sin x, e^x, and ln x</span></li>
-                <li class="topic-item"><span class="topic-id">2.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Product Rule</span></li>
-                <li class="topic-item"><span class="topic-id">2.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Quotient Rule</span></li>
-                <li class="topic-item"><span class="topic-id">2.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of Tangent, Cotangent, Secant, and Cosecant</span></li>
-            </ul>
-        </div>
+            
+            <div id="u3" class="topic-panel">
+                 <div class="panel-header"><h2>Unit 3: Differentiation (Composite)</h2></div>
+                 <ul class="dashboard-list">
+                    <li class="dashboard-item"><a href="#topic-3.1" class="topic-link">3.1</a><span class="tag tag-fun">FUN</span><span class="topic-name">The Chain Rule</span></li>
+                    </ul>
+            </div>
+            </div>
 
-        <div id="u3" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 3: Differentiation (Composite/Implicit/Inverse)</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 13%"></div></div>
-                            <span class="stat-pct">9-13%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span class="stat-pct">4-7%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">3.1</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Chain Rule</span></li>
-                <li class="topic-item"><span class="topic-id">3.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Implicit Differentiation</span></li>
-                <li class="topic-item"><span class="topic-id">3.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Differentiating Inverse Functions</span></li>
-                <li class="topic-item"><span class="topic-id">3.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Differentiating Inverse Trigonometric Functions</span></li>
-                <li class="topic-item"><span class="topic-id">3.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Selecting Procedures for Calculating Derivatives</span></li>
-                <li class="topic-item"><span class="topic-id">3.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Calculating Higher-Order Derivatives</span></li>
-            </ul>
-        </div>
+        <div class="details-section">
+            <h2 class="section-title">Detailed Course Breakdown</h2>
 
-        <div id="u4" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 4: Contextual Applications</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 15%"></div></div>
-                            <span class="stat-pct">10-15%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
-                            <span class="stat-pct">6-9%</span>
-                        </div>
+            <div id="topic-1.1" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Introducing Calculus: Can Change Occur at an Instant?</h3>
+                    <span class="detail-id">1.1</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>CHA-1:</strong> Calculus allows us to generalize knowledge about motion to diverse problems involving change.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (2.B)</h4>
+                        <p>Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.</p>
                     </div>
                 </div>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">4.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Interpreting the Meaning of the Derivative in Context</span></li>
-                <li class="topic-item"><span class="topic-id">4.2</span><span class="tag tag-cha">CHA</span><span class="topic-name">Straight-Line Motion: Position, Velocity, Acceleration</span></li>
-                <li class="topic-item"><span class="topic-id">4.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Rates of Change in Applied Contexts Other Than Motion</span></li>
-                <li class="topic-item"><span class="topic-id">4.4</span><span class="tag tag-cha">CHA</span><span class="topic-name">Introduction to Related Rates</span></li>
-                <li class="topic-item"><span class="topic-id">4.5</span><span class="tag tag-cha">CHA</span><span class="topic-name">Solving Related Rates Problems</span></li>
-                <li class="topic-item"><span class="topic-id">4.6</span><span class="tag tag-cha">CHA</span><span class="topic-name">Approximating Values Using Local Linearity and Linearization</span></li>
-                <li class="topic-item"><span class="topic-id">4.7</span><span class="tag tag-lim">LIM</span><span class="topic-name">Using L'Hospital's Rule for Indeterminate Forms</span></li>
-            </ul>
-        </div>
 
-        <div id="u5" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 5: Analytical Applications</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 18%"></div></div>
-                            <span class="stat-pct">15-18%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 11%"></div></div>
-                            <span class="stat-pct">8-11%</span>
-                        </div>
+            <div id="topic-1.2" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Defining Limits and Using Limit Notation</h3>
+                    <span class="detail-id">1.2</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>LIM-1:</strong> Reasoning with definitions, theorems, and properties can be used to justify claims about limits and continuity.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (3.C)</h4>
+                        <p>Use correct notation, language, and mathematical conventions to communicate results or solutions.</p>
                     </div>
                 </div>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">5.1</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using the Mean Value Theorem (MVT)</span></li>
-                <li class="topic-item"><span class="topic-id">5.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Extreme Value Theorem, Global vs Local Extrema, Critical Points</span></li>
-                <li class="topic-item"><span class="topic-id">5.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Intervals Where Function is Increasing/Decreasing</span></li>
-                <li class="topic-item"><span class="topic-id">5.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">First Derivative Test for Relative (Local) Extrema</span></li>
-                <li class="topic-item"><span class="topic-id">5.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using Candidates Test for Absolute (Global) Extrema</span></li>
-                <li class="topic-item"><span class="topic-id">5.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Concavity of Functions over Their Domains</span></li>
-                <li class="topic-item"><span class="topic-id">5.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using the Second Derivative Test for Extrema</span></li>
-                <li class="topic-item"><span class="topic-id">5.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Sketching Graphs of Functions and Their Derivatives</span></li>
-                <li class="topic-item"><span class="topic-id">5.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting a Function, Its First Derivative, and Second Derivative</span></li>
-                <li class="topic-item"><span class="topic-id">5.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Introduction to Optimization Problems</span></li>
-                <li class="topic-item"><span class="topic-id">5.11</span><span class="tag tag-fun">FUN</span><span class="topic-name">Solving Optimization Problems</span></li>
-                <li class="topic-item"><span class="topic-id">5.12</span><span class="tag tag-fun">FUN</span><span class="topic-name">Exploring Behaviors of Implicit Relations</span></li>
-            </ul>
-        </div>
 
-        <div id="u6" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 6: Integration and Accumulation</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 20%"></div></div>
-                            <span class="stat-pct">17-20%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 20%"></div></div>
-                            <span class="stat-pct">17-20%</span>
-                        </div>
+            <div id="topic-1.6" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Determining Limits Using Algebraic Manipulation</h3>
+                    <span class="detail-id">1.6</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>LIM-1:</strong> Reasoning with definitions, theorems, and properties can be used to justify claims about limits and continuity.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (1.C)</h4>
+                        <p>Identify an appropriate mathematical rule or procedure based on the classification of a given expression (e.g., Use the chain rule to find the derivative of a composite function).</p>
                     </div>
                 </div>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">6.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Exploring Accumulations of Change</span></li>
-                <li class="topic-item"><span class="topic-id">6.2</span><span class="tag tag-lim">LIM</span><span class="topic-name">Approximating Areas with Riemann Sums</span></li>
-                <li class="topic-item"><span class="topic-id">6.3</span><span class="tag tag-lim">LIM</span><span class="topic-name">Riemann Sums, Summation Notation, and Definite Integral</span></li>
-                <li class="topic-item"><span class="topic-id">6.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Fundamental Theorem of Calculus and Accumulation Functions</span></li>
-                <li class="topic-item"><span class="topic-id">6.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Interpreting Behavior of Accumulation Functions (Area)</span></li>
-                <li class="topic-item"><span class="topic-id">6.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Applying Properties of Definite Integrals</span></li>
-                <li class="topic-item"><span class="topic-id">6.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Fundamental Theorem of Calculus and Definite Integrals</span></li>
-                <li class="topic-item"><span class="topic-id">6.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding Antiderivatives and Indefinite Integrals: Basic Rules</span></li>
-                <li class="topic-item"><span class="topic-id">6.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">Integrating Using Substitution</span></li>
-                <li class="topic-item"><span class="topic-id">6.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Integrating Functions Using Long Division and Completing the Square</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">6.11</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Integrating Using Integration by Parts</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">6.12</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Using Linear Partial Fractions</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">6.13</span><span class="tag tag-lim">LIM</span><span class="bc-badge">BC</span><span class="topic-name">Evaluating Improper Integrals</span></li>
-                <li class="topic-item"><span class="topic-id">6.14</span><span class="tag tag-fun">FUN</span><span class="topic-name">Selecting Techniques for Antidifferentiation</span></li>
-            </ul>
-        </div>
 
-        <div id="u7" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 7: Differential Equations</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
-                            <span class="stat-pct">6-12%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
-                            <span class="stat-pct">6-9%</span>
-                        </div>
+            <div id="topic-2.1" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Defining Average and Instantaneous Rates of Change</h3>
+                    <span class="detail-id">2.1</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>CHA-2:</strong> Derivatives allow us to determine instantaneous rates of change.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (2.B)</h4>
+                        <p>Identify mathematical information from graphical, numerical, analytical, and/or verbal representations.</p>
                     </div>
                 </div>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">7.1</span><span class="tag tag-fun">FUN</span><span class="topic-name">Modeling Situations with Differential Equations</span></li>
-                <li class="topic-item"><span class="topic-id">7.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Verifying Solutions for Differential Equations</span></li>
-                <li class="topic-item"><span class="topic-id">7.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Sketching Slope Fields</span></li>
-                <li class="topic-item"><span class="topic-id">7.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Reasoning Using Slope Fields</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">7.5</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Approximating Solutions Using Euler's Method</span></li>
-                <li class="topic-item"><span class="topic-id">7.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding General Solutions Using Separation of Variables</span></li>
-                <li class="topic-item"><span class="topic-id">7.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding Particular Solutions Using Initial Conditions</span></li>
-                <li class="topic-item"><span class="topic-id">7.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Exponential Models with Differential Equations</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">7.9</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Logistic Models with Differential Equations</span></li>
-            </ul>
-        </div>
 
-        <div id="u8" class="topic-panel">
-            <div class="panel-header">
-                <h2>Unit 8: Applications of Integration</h2>
-                <div class="compact-stats">
-                    <div class="stats-title">Exam Weighting</div>
-                    <div class="stats-bars-wrapper">
-                        <div class="stat-row">
-                            <span class="stat-label">AB Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 15%"></div></div>
-                            <span class="stat-pct">10-15%</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">BC Exam:</span>
-                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
-                            <span class="stat-pct">6-9%</span>
-                        </div>
+            <div id="topic-3.1" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">The Chain Rule</h3>
+                    <span class="detail-id">3.1</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>FUN-3:</strong> Recognizing opportunities to apply derivative rules can simplify differentiation.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (1.C)</h4>
+                        <p>Apply appropriate mathematical rules or procedures, with and without technology.</p>
                     </div>
                 </div>
             </div>
-            <ul class="topic-list">
-                <li class="topic-item"><span class="topic-id">8.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding the Average Value of a Function on an Interval</span></li>
-                <li class="topic-item"><span class="topic-id">8.2</span><span class="tag tag-cha">CHA</span><span class="topic-name">Connecting Position, Velocity, and Acceleration Using Integrals</span></li>
-                <li class="topic-item"><span class="topic-id">8.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Using Accumulation Functions and Definite Integrals in Contexts</span></li>
-                <li class="topic-item"><span class="topic-id">8.4</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves Expressed as Functions of x</span></li>
-                <li class="topic-item"><span class="topic-id">8.5</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves Expressed as Functions of y</span></li>
-                <li class="topic-item"><span class="topic-id">8.6</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves That Intersect at More Than Two Points</span></li>
-                <li class="topic-item"><span class="topic-id">8.7</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volumes with Cross Sections: Squares and Rectangles</span></li>
-                <li class="topic-item"><span class="topic-id">8.8</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volumes with Cross Sections: Triangles and Semicircles</span></li>
-                <li class="topic-item"><span class="topic-id">8.9</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Disc Method: Revolving Around x- or y-Axis</span></li>
-                <li class="topic-item"><span class="topic-id">8.10</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Disc Method: Revolving Around Other Axes</span></li>
-                <li class="topic-item"><span class="topic-id">8.11</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Washer Method: Revolving Around x- or y-Axis</span></li>
-                <li class="topic-item"><span class="topic-id">8.12</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Washer Method: Revolving Around Other Axes</span></li>
-                <li class="topic-item bc-only"><span class="topic-id">8.13</span><span class="tag tag-cha">CHA</span><span class="bc-badge">BC</span><span class="topic-name">Arc Length of a Smooth, Planar Curve and Distance Traveled</span></li>
-            </ul>
+
+            <div id="topic-4.1" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Interpreting the Meaning of the Derivative in Context</h3>
+                    <span class="detail-id">4.1</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>CHA-3:</strong> Derivatives allow us to solve real-world problems involving rates of change.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (1.D)</h4>
+                        <p>Identify an appropriate mathematical rule or procedure based on the relationship between concepts.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="topic-5.1" class="detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-title">Using the Mean Value Theorem (MVT)</h3>
+                    <span class="detail-id">5.1</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="info-block eu-box">
+                        <h4>Enduring Understanding</h4>
+                        <p><strong>FUN-1:</strong> Existence theorems allow us to draw conclusions about a function's behavior on an interval without finding the function explicitly.</p>
+                    </div>
+                    <div class="info-block skill-box">
+                        <h4>Suggested Skill (3.E)</h4>
+                        <p>Provide reasons or rationales for solutions and conclusions.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </main>
 
     <script>
-        function openTab(evt, unitId) {
-            // 1. Hide all tab content
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("topic-panel");
-            for (i = 0; i < tabcontent.length; i++) {
+        function openUnit(evt, unitId) {
+            // 1. Hide all panels
+            var tabcontent = document.getElementsByClassName("topic-panel");
+            for (var i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].classList.remove("active");
             }
 
-            // 2. Deactivate all buttons
-            tablinks = document.getElementsByClassName("nav-btn");
-            for (i = 0; i < tablinks.length; i++) {
+            // 2. Deactivate sidebar buttons
+            var tablinks = document.getElementsByClassName("nav-btn");
+            for (var i = 0; i < tablinks.length; i++) {
                 tablinks[i].classList.remove("active");
             }
 
-            // 3. Show the specific tab and activate the button
-            document.getElementById(unitId).classList.add("active");
-            evt.currentTarget.classList.add("active");
+            // 3. Activate selected
+            var selectedPanel = document.getElementById(unitId);
+            if(selectedPanel) selectedPanel.classList.add("active");
+            if(evt) evt.currentTarget.classList.add("active");
         }
     </script>
 </body>
