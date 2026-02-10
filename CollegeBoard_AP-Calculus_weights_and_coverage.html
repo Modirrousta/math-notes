@@ -3,28 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AP Calculus: Breakdown</title>
+    <title>AP Calculus: Full Breakdown</title>
     <style>
         :root {
             /* Light Theme Variables */
-            --bg-body: #f3f4f6;       /* Light Grey Background */
-            --bg-sidebar: #ffffff;    /* White Sidebar */
-            --bg-card: #ffffff;       /* White Content Cards */
+            --bg-body: #f3f4f6;       
+            --bg-sidebar: #ffffff;    
+            --bg-card: #ffffff;       
             
-            --text-main: #1f2937;     /* Dark Grey Text */
-            --text-muted: #6b7280;    /* Muted Grey */
+            --text-main: #1f2937;     
+            --text-muted: #6b7280;    
             --border-color: #e5e7eb;  
             
-            /* Professional Accents (Less Neon) */
-            --primary: #2563eb;       /* Standard Blue */
+            /* Professional Accents */
+            --primary: #2563eb;       
             --primary-light: #eff6ff;
             --ab-color: #0ea5e9;      /* Sky Blue */
             --bc-color: #d946ef;      /* Fuchsia */
             
-            /* Tag Colors (Pastel/Soft) */
+            /* Tag Colors */
             --tag-lim-bg: #fff7ed; --tag-lim-text: #c2410c; --tag-lim-border: #fdba74;
             --tag-fun-bg: #fef2f2; --tag-fun-text: #b91c1c; --tag-fun-border: #fca5a5;
             --tag-cha-bg: #ecfdf5; --tag-cha-text: #047857; --tag-cha-border: #6ee7b7;
+
+            /* BC Only Topic Styling */
+            --bc-topic-bg: #fdf4ff;
+            --bc-topic-border: #f0abfc;
         }
 
         body {
@@ -35,10 +39,10 @@
             padding: 0;
             display: flex;
             height: 100vh;
-            overflow: hidden; /* Prevent body scroll, let content scroll */
+            overflow: hidden; 
         }
 
-        /* --- SIDEBAR (Static Left Pane) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: 280px;
             background-color: var(--bg-sidebar);
@@ -51,37 +55,27 @@
         }
 
         .brand {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .brand h1 {
-            font-size: 1.25rem;
-            margin: 0;
-            color: var(--text-main);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        
-        .brand p {
-            margin: 5px 0 0 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+        .brand h1 { font-size: 1.25rem; margin: 0; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
+        .brand p { margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-muted); }
 
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             overflow-y: auto;
+            padding-right: 5px; /* space for scrollbar */
         }
 
         .nav-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 12px 15px;
+            padding: 10px 15px;
             text-align: left;
             cursor: pointer;
             border-radius: 8px;
@@ -91,30 +85,13 @@
             flex-direction: column;
         }
 
-        .nav-btn:hover {
-            background-color: var(--bg-body);
-            color: var(--primary);
-        }
+        .nav-btn:hover { background-color: var(--bg-body); color: var(--primary); }
+        .nav-btn.active { background-color: var(--primary-light); color: var(--primary); border: 1px solid #bfdbfe; }
 
-        .nav-btn.active {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            border: 1px solid #bfdbfe;
-        }
+        .nav-unit-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 2px; }
+        .nav-unit-title { font-size: 0.9rem; line-height: 1.2; }
 
-        .nav-unit-num {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
-            margin-bottom: 4px;
-        }
-
-        .nav-unit-title {
-            font-size: 0.95rem;
-        }
-
-        /* --- MAIN CONTENT AREA --- */
+        /* --- MAIN CONTENT --- */
         .main-content {
             flex: 1;
             padding: 30px 40px;
@@ -122,29 +99,17 @@
             position: relative;
         }
 
-        /* --- CONTENT PANELS --- */
         .topic-panel {
             display: none;
             max-width: 900px;
-            margin: 0 auto;
+            margin: 0 auto 50px auto;
             animation: fadeIn 0.3s ease-in;
         }
+        .topic-panel.active { display: block; }
 
-        .topic-panel.active {
-            display: block;
-        }
+        .panel-header h2 { font-size: 1.8rem; margin: 0 0 15px 0; color: var(--text-main); }
 
-        .panel-header {
-            margin-bottom: 25px;
-        }
-        
-        .panel-header h2 {
-            font-size: 1.8rem;
-            margin: 0 0 15px 0;
-            color: var(--text-main);
-        }
-
-        /* Stats Bar Integration (Compact) */
+        /* Stats Bar */
         .compact-stats {
             background: white;
             border: 1px solid var(--border-color);
@@ -165,26 +130,11 @@
             min-width: 120px;
         }
 
-        .stats-bars-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .stat-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            width: 80px;
-            color: var(--text-muted);
-        }
-
+        .stats-bars-wrapper { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .stat-row { display: flex; align-items: center; gap: 15px; }
+        .stat-label { font-size: 0.8rem; font-weight: 600; width: 80px; color: var(--text-muted); }
+        .stat-pct { font-size: 0.8rem; color: var(--text-muted); width: 60px; text-align: right; }
+        
         .progress-bg {
             flex: 1;
             background: #e5e7eb;
@@ -193,12 +143,11 @@
             overflow: hidden;
             max-width: 400px;
         }
-
         .progress-fill { height: 100%; border-radius: 4px; }
         .fill-ab { background-color: var(--ab-color); }
         .fill-bc { background-color: var(--bc-color); }
 
-        /* Topic List Styling */
+        /* Topic List */
         .topic-list {
             list-style: none;
             padding: 0;
@@ -212,30 +161,32 @@
         .topic-item {
             display: flex;
             align-items: center;
-            padding: 16px 20px;
+            padding: 14px 20px;
             border-bottom: 1px solid var(--border-color);
             transition: background 0.1s;
         }
-
         .topic-item:last-child { border-bottom: none; }
         .topic-item:hover { background-color: #f9fafb; }
+
+        /* BC Only Row Styling */
+        .topic-item.bc-only {
+            background-color: var(--bc-topic-bg);
+            border-left: 4px solid var(--bc-color);
+            padding-left: 16px; /* Adjust for border */
+        }
+        .topic-item.bc-only:hover { background-color: #fae8ff; }
 
         .topic-id {
             font-family: 'Courier New', monospace;
             font-weight: 700;
             color: var(--text-muted);
             margin-right: 20px;
-            width: 40px;
+            width: 45px;
             flex-shrink: 0;
         }
 
-        .topic-name {
-            font-size: 1rem;
-            color: var(--text-main);
-            font-weight: 500;
-        }
+        .topic-name { font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
 
-        /* Tags */
         .tag {
             font-size: 0.65rem;
             padding: 3px 8px;
@@ -252,16 +203,28 @@
         .tag-cha { background: var(--tag-cha-bg); color: var(--tag-cha-text); border: 1px solid var(--tag-cha-border); }
         .tag-lim { background: var(--tag-lim-bg); color: var(--tag-lim-text); border: 1px solid var(--tag-lim-border); }
         .tag-fun { background: var(--tag-fun-bg); color: var(--tag-fun-text); border: 1px solid var(--tag-fun-border); }
+        
+        .bc-badge {
+            font-size: 0.6rem;
+            background: var(--bc-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
 
-        /* Responsive Mobile */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; height: auto; }
             .sidebar { width: 100%; height: auto; padding: 15px; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 5px; }
-            .nav-btn { min-width: 140px; }
+            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 5px; gap: 10px; }
+            .nav-btn { min-width: 140px; flex-shrink: 0; }
             .main-content { padding: 20px; }
             .compact-stats { flex-direction: column; align-items: flex-start; gap: 15px; }
             .progress-bg { max-width: 100%; }
+            .topic-item { align-items: flex-start; }
+            .topic-name { font-size: 0.9rem; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -272,7 +235,7 @@
     <aside class="sidebar">
         <div class="brand">
             <h1>AP Calculus</h1>
-            <p>Dashboard & Weighting</p>
+            <p>Unit Breakdown & Weighting</p>
         </div>
         <nav class="nav-menu">
             <button class="nav-btn active" onclick="openTab(event, 'u1')">
@@ -281,11 +244,11 @@
             </button>
             <button class="nav-btn" onclick="openTab(event, 'u2')">
                 <span class="nav-unit-num">UNIT 2</span>
-                <span class="nav-unit-title">Diff: Definition</span>
+                <span class="nav-unit-title">Differentiation: Def</span>
             </button>
             <button class="nav-btn" onclick="openTab(event, 'u3')">
                 <span class="nav-unit-num">UNIT 3</span>
-                <span class="nav-unit-title">Diff: Composite</span>
+                <span class="nav-unit-title">Differentiation: Comp</span>
             </button>
             <button class="nav-btn" onclick="openTab(event, 'u4')">
                 <span class="nav-unit-num">UNIT 4</span>
@@ -294,6 +257,18 @@
             <button class="nav-btn" onclick="openTab(event, 'u5')">
                 <span class="nav-unit-num">UNIT 5</span>
                 <span class="nav-unit-title">Analytical Apps</span>
+            </button>
+            <button class="nav-btn" onclick="openTab(event, 'u6')">
+                <span class="nav-unit-num">UNIT 6</span>
+                <span class="nav-unit-title">Integration & Accum</span>
+            </button>
+            <button class="nav-btn" onclick="openTab(event, 'u7')">
+                <span class="nav-unit-num">UNIT 7</span>
+                <span class="nav-unit-title">Differential Eq</span>
+            </button>
+            <button class="nav-btn" onclick="openTab(event, 'u8')">
+                <span class="nav-unit-num">UNIT 8</span>
+                <span class="nav-unit-title">Apps of Integration</span>
             </button>
         </nav>
     </aside>
@@ -309,17 +284,16 @@
                         <div class="stat-row">
                             <span class="stat-label">AB Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">10-12%</span>
+                            <span class="stat-pct">10-12%</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">BC Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">4-7%</span>
+                            <span class="stat-pct">4-7%</span>
                         </div>
                     </div>
                 </div>
             </div>
-
             <ul class="topic-list">
                 <li class="topic-item"><span class="topic-id">1.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Introducing Calculus: Can Change Occur at an Instant?</span></li>
                 <li class="topic-item"><span class="topic-id">1.2</span><span class="tag tag-lim">LIM</span><span class="topic-name">Defining Limits and Using Limit Notation</span></li>
@@ -349,12 +323,12 @@
                         <div class="stat-row">
                             <span class="stat-label">AB Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">10-12%</span>
+                            <span class="stat-pct">10-12%</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">BC Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">4-7%</span>
+                            <span class="stat-pct">4-7%</span>
                         </div>
                     </div>
                 </div>
@@ -365,11 +339,11 @@
                 <li class="topic-item"><span class="topic-id">2.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Estimating Derivatives of a Function at a Point</span></li>
                 <li class="topic-item"><span class="topic-id">2.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting Differentiability and Continuity</span></li>
                 <li class="topic-item"><span class="topic-id">2.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Applying the Power Rule</span></li>
-                <li class="topic-item"><span class="topic-id">2.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivative Rules: Constant, Sum, Difference, Multiplier</span></li>
+                <li class="topic-item"><span class="topic-id">2.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivative Rules: Constant, Sum, Difference, Constant Multiple</span></li>
                 <li class="topic-item"><span class="topic-id">2.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of cos x, sin x, e^x, and ln x</span></li>
                 <li class="topic-item"><span class="topic-id">2.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Product Rule</span></li>
                 <li class="topic-item"><span class="topic-id">2.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Quotient Rule</span></li>
-                <li class="topic-item"><span class="topic-id">2.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of Tan, Cot, Sec, and Csc</span></li>
+                <li class="topic-item"><span class="topic-id">2.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Derivatives of Tangent, Cotangent, Secant, and Cosecant</span></li>
             </ul>
         </div>
 
@@ -382,12 +356,12 @@
                         <div class="stat-row">
                             <span class="stat-label">AB Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 13%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">9-13%</span>
+                            <span class="stat-pct">9-13%</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">BC Exam:</span>
                             <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 7%"></div></div>
-                            <span style="font-size:0.8rem; color:var(--text-muted)">4-7%</span>
+                            <span class="stat-pct">4-7%</span>
                         </div>
                     </div>
                 </div>
@@ -405,14 +379,29 @@
         <div id="u4" class="topic-panel">
             <div class="panel-header">
                 <h2>Unit 4: Contextual Applications</h2>
+                <div class="compact-stats">
+                    <div class="stats-title">Exam Weighting</div>
+                    <div class="stats-bars-wrapper">
+                        <div class="stat-row">
+                            <span class="stat-label">AB Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 15%"></div></div>
+                            <span class="stat-pct">10-15%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">BC Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
+                            <span class="stat-pct">6-9%</span>
+                        </div>
+                    </div>
                 </div>
+            </div>
             <ul class="topic-list">
                 <li class="topic-item"><span class="topic-id">4.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Interpreting the Meaning of the Derivative in Context</span></li>
                 <li class="topic-item"><span class="topic-id">4.2</span><span class="tag tag-cha">CHA</span><span class="topic-name">Straight-Line Motion: Position, Velocity, Acceleration</span></li>
                 <li class="topic-item"><span class="topic-id">4.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Rates of Change in Applied Contexts Other Than Motion</span></li>
                 <li class="topic-item"><span class="topic-id">4.4</span><span class="tag tag-cha">CHA</span><span class="topic-name">Introduction to Related Rates</span></li>
                 <li class="topic-item"><span class="topic-id">4.5</span><span class="tag tag-cha">CHA</span><span class="topic-name">Solving Related Rates Problems</span></li>
-                <li class="topic-item"><span class="topic-id">4.6</span><span class="tag tag-cha">CHA</span><span class="topic-name">Approximating Values Using Local Linearity</span></li>
+                <li class="topic-item"><span class="topic-id">4.6</span><span class="tag tag-cha">CHA</span><span class="topic-name">Approximating Values Using Local Linearity and Linearization</span></li>
                 <li class="topic-item"><span class="topic-id">4.7</span><span class="tag tag-lim">LIM</span><span class="topic-name">Using L'Hospital's Rule for Indeterminate Forms</span></li>
             </ul>
         </div>
@@ -420,20 +409,140 @@
         <div id="u5" class="topic-panel">
             <div class="panel-header">
                 <h2>Unit 5: Analytical Applications</h2>
+                <div class="compact-stats">
+                    <div class="stats-title">Exam Weighting</div>
+                    <div class="stats-bars-wrapper">
+                        <div class="stat-row">
+                            <span class="stat-label">AB Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 18%"></div></div>
+                            <span class="stat-pct">15-18%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">BC Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 11%"></div></div>
+                            <span class="stat-pct">8-11%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <ul class="topic-list">
                 <li class="topic-item"><span class="topic-id">5.1</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using the Mean Value Theorem (MVT)</span></li>
-                <li class="topic-item"><span class="topic-id">5.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Extreme Value Theorem (EVT) & Critical Points</span></li>
-                <li class="topic-item"><span class="topic-id">5.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Increasing or Decreasing Intervals</span></li>
-                <li class="topic-item"><span class="topic-id">5.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">First Derivative Test for Relative Extrema</span></li>
-                <li class="topic-item"><span class="topic-id">5.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using Candidates Test for Absolute Extrema</span></li>
-                <li class="topic-item"><span class="topic-id">5.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Concavity of Functions</span></li>
+                <li class="topic-item"><span class="topic-id">5.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Extreme Value Theorem, Global vs Local Extrema, Critical Points</span></li>
+                <li class="topic-item"><span class="topic-id">5.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Intervals Where Function is Increasing/Decreasing</span></li>
+                <li class="topic-item"><span class="topic-id">5.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">First Derivative Test for Relative (Local) Extrema</span></li>
+                <li class="topic-item"><span class="topic-id">5.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using Candidates Test for Absolute (Global) Extrema</span></li>
+                <li class="topic-item"><span class="topic-id">5.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Determining Concavity of Functions over Their Domains</span></li>
                 <li class="topic-item"><span class="topic-id">5.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Using the Second Derivative Test for Extrema</span></li>
                 <li class="topic-item"><span class="topic-id">5.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Sketching Graphs of Functions and Their Derivatives</span></li>
-                <li class="topic-item"><span class="topic-id">5.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting f, f', and f''</span></li>
+                <li class="topic-item"><span class="topic-id">5.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">Connecting a Function, Its First Derivative, and Second Derivative</span></li>
                 <li class="topic-item"><span class="topic-id">5.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Introduction to Optimization Problems</span></li>
                 <li class="topic-item"><span class="topic-id">5.11</span><span class="tag tag-fun">FUN</span><span class="topic-name">Solving Optimization Problems</span></li>
                 <li class="topic-item"><span class="topic-id">5.12</span><span class="tag tag-fun">FUN</span><span class="topic-name">Exploring Behaviors of Implicit Relations</span></li>
+            </ul>
+        </div>
+
+        <div id="u6" class="topic-panel">
+            <div class="panel-header">
+                <h2>Unit 6: Integration and Accumulation</h2>
+                <div class="compact-stats">
+                    <div class="stats-title">Exam Weighting</div>
+                    <div class="stats-bars-wrapper">
+                        <div class="stat-row">
+                            <span class="stat-label">AB Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 20%"></div></div>
+                            <span class="stat-pct">17-20%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">BC Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 20%"></div></div>
+                            <span class="stat-pct">17-20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item"><span class="topic-id">6.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Exploring Accumulations of Change</span></li>
+                <li class="topic-item"><span class="topic-id">6.2</span><span class="tag tag-lim">LIM</span><span class="topic-name">Approximating Areas with Riemann Sums</span></li>
+                <li class="topic-item"><span class="topic-id">6.3</span><span class="tag tag-lim">LIM</span><span class="topic-name">Riemann Sums, Summation Notation, and Definite Integral</span></li>
+                <li class="topic-item"><span class="topic-id">6.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Fundamental Theorem of Calculus and Accumulation Functions</span></li>
+                <li class="topic-item"><span class="topic-id">6.5</span><span class="tag tag-fun">FUN</span><span class="topic-name">Interpreting Behavior of Accumulation Functions (Area)</span></li>
+                <li class="topic-item"><span class="topic-id">6.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Applying Properties of Definite Integrals</span></li>
+                <li class="topic-item"><span class="topic-id">6.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">The Fundamental Theorem of Calculus and Definite Integrals</span></li>
+                <li class="topic-item"><span class="topic-id">6.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding Antiderivatives and Indefinite Integrals: Basic Rules</span></li>
+                <li class="topic-item"><span class="topic-id">6.9</span><span class="tag tag-fun">FUN</span><span class="topic-name">Integrating Using Substitution</span></li>
+                <li class="topic-item"><span class="topic-id">6.10</span><span class="tag tag-fun">FUN</span><span class="topic-name">Integrating Functions Using Long Division and Completing the Square</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">6.11</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Integrating Using Integration by Parts</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">6.12</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Using Linear Partial Fractions</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">6.13</span><span class="tag tag-lim">LIM</span><span class="bc-badge">BC</span><span class="topic-name">Evaluating Improper Integrals</span></li>
+                <li class="topic-item"><span class="topic-id">6.14</span><span class="tag tag-fun">FUN</span><span class="topic-name">Selecting Techniques for Antidifferentiation</span></li>
+            </ul>
+        </div>
+
+        <div id="u7" class="topic-panel">
+            <div class="panel-header">
+                <h2>Unit 7: Differential Equations</h2>
+                <div class="compact-stats">
+                    <div class="stats-title">Exam Weighting</div>
+                    <div class="stats-bars-wrapper">
+                        <div class="stat-row">
+                            <span class="stat-label">AB Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 12%"></div></div>
+                            <span class="stat-pct">6-12%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">BC Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
+                            <span class="stat-pct">6-9%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item"><span class="topic-id">7.1</span><span class="tag tag-fun">FUN</span><span class="topic-name">Modeling Situations with Differential Equations</span></li>
+                <li class="topic-item"><span class="topic-id">7.2</span><span class="tag tag-fun">FUN</span><span class="topic-name">Verifying Solutions for Differential Equations</span></li>
+                <li class="topic-item"><span class="topic-id">7.3</span><span class="tag tag-fun">FUN</span><span class="topic-name">Sketching Slope Fields</span></li>
+                <li class="topic-item"><span class="topic-id">7.4</span><span class="tag tag-fun">FUN</span><span class="topic-name">Reasoning Using Slope Fields</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">7.5</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Approximating Solutions Using Euler's Method</span></li>
+                <li class="topic-item"><span class="topic-id">7.6</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding General Solutions Using Separation of Variables</span></li>
+                <li class="topic-item"><span class="topic-id">7.7</span><span class="tag tag-fun">FUN</span><span class="topic-name">Finding Particular Solutions Using Initial Conditions</span></li>
+                <li class="topic-item"><span class="topic-id">7.8</span><span class="tag tag-fun">FUN</span><span class="topic-name">Exponential Models with Differential Equations</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">7.9</span><span class="tag tag-fun">FUN</span><span class="bc-badge">BC</span><span class="topic-name">Logistic Models with Differential Equations</span></li>
+            </ul>
+        </div>
+
+        <div id="u8" class="topic-panel">
+            <div class="panel-header">
+                <h2>Unit 8: Applications of Integration</h2>
+                <div class="compact-stats">
+                    <div class="stats-title">Exam Weighting</div>
+                    <div class="stats-bars-wrapper">
+                        <div class="stat-row">
+                            <span class="stat-label">AB Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-ab" style="width: 15%"></div></div>
+                            <span class="stat-pct">10-15%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">BC Exam:</span>
+                            <div class="progress-bg"><div class="progress-fill fill-bc" style="width: 9%"></div></div>
+                            <span class="stat-pct">6-9%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item"><span class="topic-id">8.1</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding the Average Value of a Function on an Interval</span></li>
+                <li class="topic-item"><span class="topic-id">8.2</span><span class="tag tag-cha">CHA</span><span class="topic-name">Connecting Position, Velocity, and Acceleration Using Integrals</span></li>
+                <li class="topic-item"><span class="topic-id">8.3</span><span class="tag tag-cha">CHA</span><span class="topic-name">Using Accumulation Functions and Definite Integrals in Contexts</span></li>
+                <li class="topic-item"><span class="topic-id">8.4</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves Expressed as Functions of x</span></li>
+                <li class="topic-item"><span class="topic-id">8.5</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves Expressed as Functions of y</span></li>
+                <li class="topic-item"><span class="topic-id">8.6</span><span class="tag tag-cha">CHA</span><span class="topic-name">Finding Area Between Curves That Intersect at More Than Two Points</span></li>
+                <li class="topic-item"><span class="topic-id">8.7</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volumes with Cross Sections: Squares and Rectangles</span></li>
+                <li class="topic-item"><span class="topic-id">8.8</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volumes with Cross Sections: Triangles and Semicircles</span></li>
+                <li class="topic-item"><span class="topic-id">8.9</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Disc Method: Revolving Around x- or y-Axis</span></li>
+                <li class="topic-item"><span class="topic-id">8.10</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Disc Method: Revolving Around Other Axes</span></li>
+                <li class="topic-item"><span class="topic-id">8.11</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Washer Method: Revolving Around x- or y-Axis</span></li>
+                <li class="topic-item"><span class="topic-id">8.12</span><span class="tag tag-cha">CHA</span><span class="topic-name">Volume with Washer Method: Revolving Around Other Axes</span></li>
+                <li class="topic-item bc-only"><span class="topic-id">8.13</span><span class="tag tag-cha">CHA</span><span class="bc-badge">BC</span><span class="topic-name">Arc Length of a Smooth, Planar Curve and Distance Traveled</span></li>
             </ul>
         </div>
 
